@@ -18,6 +18,12 @@ public class Main extends Application {
     // Track current player
     private String currentPlayer = "X";
 
+    // 2D array to store board state
+    private String[][] board = new String[BOARD_SIZE][BOARD_SIZE];
+
+    // Track whether game has ended
+    private boolean gameOver = false;
+
     @Override
     public void start(Stage primaryStage) {
 
@@ -36,6 +42,10 @@ public class Main extends Application {
 
             for (int col = 0; col < BOARD_SIZE; col++) {
 
+                // Store current row and column for event handling
+                final int currentRow = row;
+                final int currentCol = col;
+
                 // Create a button
                 Button button = new Button();
 
@@ -46,10 +56,20 @@ public class Main extends Application {
                 button.setOnAction(event -> {
 
                     // Only allow click if button is empty
-                    if (button.getText().isEmpty()){
+                    if (button.getText().isEmpty() && !gameOver){
 
                         // set current player's symbol
                         button.setText(currentPlayer);
+
+                        // Store move in board array
+                        board[currentRow][currentCol] = currentPlayer;
+
+                        // Check if current player has won
+                        if (checkWinner()) {
+
+                            System.out.println("Player " + currentPlayer + " won!");
+                            gameOver = true;
+                        }
 
                         // Switch players turn
                         if (currentPlayer.equals("X")) {
@@ -74,6 +94,49 @@ public class Main extends Application {
 
         // Show application window
         primaryStage.show();
+    }
+
+    /**
+     *  Checks if the current player has won
+     */
+    private boolean checkWinner() {
+
+        // Check rows
+        for (int row = 0; row < BOARD_SIZE; row++) {
+
+            if (board[row][0] != null &&
+                    board[row][0].equals(board[row][1]) &&
+                    board[row][1].equals(board[row][2])) {
+                return true;
+            }
+        }
+
+        // Check columns
+        for (int col = 0; col < BOARD_SIZE; col++) {
+
+            if (board[0][col] != null &&
+                    board[0][col].equals(board[1][col]) &&
+                    board[1][col].equals(board[2][col])) {
+                return true;
+            }
+        }
+
+        // Check main diagonal
+        if (board[0][0] != null &&
+                board[0][0].equals(board[1][1]) &&
+                board[1][1].equals(board[2][2])) {
+            return true;
+        }
+
+        // Check opposite diagonal
+        if (board[0][2] != null &&
+                board[0][2].equals(board[1][1]) &&
+                board[1][1].equals(board[2][0])) {
+            return true;
+        }
+
+        // No winner found
+        return false;
     }
 
     /**
