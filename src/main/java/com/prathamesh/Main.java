@@ -70,6 +70,13 @@ public class Main extends Application {
                             System.out.println("Player " + currentPlayer + " won!");
                             gameOver = true;
                         }
+                        // Check for draw
+                        else if (checkDraw()) {
+
+                            System.out.println("The game is a draw!");
+
+                            gameOver = true;
+                        }
 
                         // Switch players turn
                         if (currentPlayer.equals("X")) {
@@ -137,6 +144,27 @@ public class Main extends Application {
 
         // No winner found
         return false;
+    }
+
+    /**
+     * Checks if the game is a draw.
+     */
+    private boolean checkDraw() {
+
+        // Check every cell in the board
+        for (int row = 0; row < BOARD_SIZE; row++) {
+
+            for (int col = 0; col < BOARD_SIZE; col++) {
+
+                // If any cell is empty, game is not draw
+                if (board[row][col] == null) {
+                    return false;
+                }
+            }
+        }
+
+        // No empty cells found
+        return true;
     }
 
     /**
