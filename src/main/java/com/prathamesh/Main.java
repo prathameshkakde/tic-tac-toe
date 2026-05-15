@@ -4,9 +4,7 @@ import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
@@ -16,6 +14,9 @@ public class Main extends Application {
 
     // size of the Tic-Tac-Toe board
     private static final int BOARD_SIZE = 3;
+
+    // Track current player
+    private String currentPlayer = "X";
 
     @Override
     public void start(Stage primaryStage) {
@@ -40,6 +41,24 @@ public class Main extends Application {
 
                 // Set button size
                 button.setPrefSize(100, 100);
+
+                // Button click event
+                button.setOnAction(event -> {
+
+                    // Only allow click if button is empty
+                    if (button.getText().isEmpty()){
+
+                        // set current player's symbol
+                        button.setText(currentPlayer);
+
+                        // Switch players turn
+                        if (currentPlayer.equals("X")) {
+                            currentPlayer = "O";
+                        } else {
+                            currentPlayer = "X";
+                        }
+                    }
+                });
 
                 // Add button to GridPane
                 gridPane.add(button, col, row);
