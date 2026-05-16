@@ -5,6 +5,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 /**
@@ -23,6 +25,9 @@ public class Main extends Application {
 
     // Track whether game has ended
     private boolean gameOver = false;
+
+    // Store button references
+    private Button[][] buttons = new Button[BOARD_SIZE][BOARD_SIZE];
 
     @Override
     public void start(Stage primaryStage) {
@@ -48,6 +53,9 @@ public class Main extends Application {
 
                 // Create a button
                 Button button = new Button();
+
+                // Store button reference
+                buttons[currentRow][currentCol] = button;
 
                 // Set button size
                 button.setPrefSize(100, 100);
@@ -92,8 +100,23 @@ public class Main extends Application {
             }
         }
 
+        // Create restart button
+        Button restartButton = new Button("Restart Game");
+
+        // Restart button click event
+        restartButton.setOnAction(event -> resetGame());
+
+        // Create vertical layout
+        VBox root = new VBox(20);
+
+        // Center layout
+        root.setAlignment(Pos.CENTER);
+
+        // Add game board and restart button
+        root.getChildren().addAll(gridPane, restartButton);
+
         // Create scene
-        Scene scene = new Scene(gridPane, 400, 400);
+        Scene scene = new Scene(root, 400, 500);
 
         // Configure stage
         primaryStage.setTitle("Tic-Tac-Toe Game");
@@ -165,6 +188,33 @@ public class Main extends Application {
 
         // No empty cells found
         return true;
+    }
+
+    /**
+     * Reset the game board
+     */
+    private void resetGame() {
+
+        // Reset board array and buttons
+        for  (int row = 0; row < BOARD_SIZE; row++) {
+
+            for (int col = 0; col < BOARD_SIZE; col++) {
+
+                // Clear board data
+                board[row][col] = null;
+
+                // Clear button text
+                buttons[row][col].setText("");
+            }
+        }
+
+        // Reset current player
+        currentPlayer = "X";
+
+        // Allow game again
+        gameOver = false;
+
+        System.out.println("Game restarted!");
     }
 
     /**
