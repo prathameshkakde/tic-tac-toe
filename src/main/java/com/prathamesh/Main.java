@@ -29,6 +29,9 @@ public class Main extends Application {
     // Store button references
     private Button[][] buttons = new Button[BOARD_SIZE][BOARD_SIZE];
 
+    // Label to display game status
+    private Label statusLabel = new Label("Player X's Turn");
+
     @Override
     public void start(Stage primaryStage) {
 
@@ -41,6 +44,9 @@ public class Main extends Application {
         // Add spacing between buttons
         gridPane.setHgap(10);
         gridPane.setVgap(10);
+
+        // Style status label
+        statusLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 
         // Create 3 by 3 buttons using nested loops
         for (int row = 0; row < BOARD_SIZE; row++) {
@@ -75,22 +81,31 @@ public class Main extends Application {
                         // Check if current player has won
                         if (checkWinner()) {
 
-                            System.out.println("Player " + currentPlayer + " won!");
+                            System.out.println("Player " + currentPlayer + " Wins!!");
+                            statusLabel.setText("Player " + currentPlayer + " Wins!");
                             gameOver = true;
                         }
                         // Check for draw
                         else if (checkDraw()) {
 
                             System.out.println("The game is a draw!");
+                            statusLabel.setText("It's a Draw!");
 
                             gameOver = true;
                         }
 
-                        // Switch players turn
-                        if (currentPlayer.equals("X")) {
-                            currentPlayer = "O";
-                        } else {
-                            currentPlayer = "X";
+                        // Switch player only if game is still running
+                        if (!gameOver) {
+
+                            // Switch players turn
+                            if (currentPlayer.equals("X")) {
+                                currentPlayer = "O";
+                            } else {
+                                currentPlayer = "X";
+                            }
+
+                            // Update turn message
+                            statusLabel.setText("Player " + currentPlayer + "'s Turn");
                         }
                     }
                 });
@@ -113,7 +128,7 @@ public class Main extends Application {
         root.setAlignment(Pos.CENTER);
 
         // Add game board and restart button
-        root.getChildren().addAll(gridPane, restartButton);
+        root.getChildren().addAll(statusLabel, gridPane, restartButton);
 
         // Create scene
         Scene scene = new Scene(root, 400, 500);
@@ -210,6 +225,9 @@ public class Main extends Application {
 
         // Reset current player
         currentPlayer = "X";
+
+        // Reset status label
+        statusLabel.setText("Player X's Turn");
 
         // Allow game again
         gameOver = false;
