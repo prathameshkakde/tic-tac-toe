@@ -256,11 +256,14 @@ public class Main extends Application {
                 // Clear button text
                 buttons[row][col].setText("");
 
-                // Re-enable buttons
+                // Re-enable button first
                 buttons[row][col].setDisable(false);
 
-                // Restore button style
-                applyDisabledButtonStyle(buttons[row][col]);
+                // Clear any disabled styling
+                buttons[row][col].setStyle("");
+
+                // Apply normal style again
+                applyNormalButtonStyle(buttons[row][col]);
             }
         }
 
