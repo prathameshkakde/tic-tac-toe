@@ -46,7 +46,11 @@ public class Main extends Application {
         gridPane.setVgap(10);
 
         // Style status label
-        statusLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        statusLabel.setStyle(
+                "-fx-font-size: 20px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-text-fill: #333333;"
+        );
 
         // Create 3 by 3 buttons using nested loops
         for (int row = 0; row < BOARD_SIZE; row++) {
@@ -66,6 +70,17 @@ public class Main extends Application {
                 // Set button size
                 button.setPrefSize(100, 100);
 
+                // Style game buttons
+                button.setStyle(
+                        "-fx-font-size: 32px;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-background-color: #f5f5f5;" +
+                                "-fx-border-color: #dcdcdc;" +
+                                "-fx-border-width: 2px;" +
+                                "-fx-background-radius: 15px;" +
+                                "-fx-border-radius: 15px;"
+                );
+
                 // Button click event
                 button.setOnAction(event -> {
 
@@ -83,15 +98,28 @@ public class Main extends Application {
 
                             System.out.println("Player " + currentPlayer + " Wins!!");
                             statusLabel.setText("Player " + currentPlayer + " Wins!");
+                            statusLabel.setStyle(
+                                    "-fx-font-size: 20px;" +
+                                            "-fx-font-weight: bold;" +
+                                            "-fx-text-fill: #2E8B57;"
+                            );
                             gameOver = true;
+                            // Disable all buttons visually
+                            disableBoard();
                         }
                         // Check for draw
                         else if (checkDraw()) {
 
                             System.out.println("The game is a draw!");
                             statusLabel.setText("It's a Draw!");
+                            statusLabel.setStyle(
+                                    "-fx-font-size: 20px;" +
+                                            "-fx-font-weight: bold;" +
+                                            "-fx-text-fill: #FF8C00;"
+                            );
 
                             gameOver = true;
+                            disableBoard();
                         }
 
                         // Switch player only if game is still running
@@ -106,6 +134,11 @@ public class Main extends Application {
 
                             // Update turn message
                             statusLabel.setText("Player " + currentPlayer + "'s Turn");
+                            statusLabel.setStyle(
+                                    "-fx-font-size: 20px;" +
+                                            "-fx-font-weight: bold;" +
+                                            "-fx-text-fill: #333333;"
+                            );
                         }
                     }
                 });
@@ -117,6 +150,16 @@ public class Main extends Application {
 
         // Create restart button
         Button restartButton = new Button("Restart Game");
+
+        // Style restart button
+        restartButton.setStyle(
+                "-fx-font-size: 16px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-color: #4CAF50;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-background-radius: 12px;" +
+                        "-fx-padding: 10px 20px;"
+        );
 
         // Restart button click event
         restartButton.setOnAction(event -> resetGame());
@@ -131,7 +174,7 @@ public class Main extends Application {
         root.getChildren().addAll(statusLabel, gridPane, restartButton);
 
         // Create scene
-        Scene scene = new Scene(root, 400, 500);
+        Scene scene = new Scene(root, 450, 550);
 
         // Configure stage
         primaryStage.setTitle("Tic-Tac-Toe Game");
@@ -220,6 +263,20 @@ public class Main extends Application {
 
                 // Clear button text
                 buttons[row][col].setText("");
+
+                // Re-enable buttons
+                buttons[row][col].setDisable(false);
+
+                // Restore button style
+                buttons[row][col].setStyle(
+                        "-fx-font-size: 32px;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-background-color: #f5f5f5;" +
+                                "-fx-border-color: #dcdcdc;" +
+                                "-fx-border-width: 2px;" +
+                                "-fx-background-radius: 15px;" +
+                                "-fx-border-radius: 15px;"
+                );
             }
         }
 
@@ -233,6 +290,29 @@ public class Main extends Application {
         gameOver = false;
 
         System.out.println("Game restarted!");
+    }
+
+    /**
+     * Disables the board visually after game ends.
+     */
+    private void disableBoard() {
+
+        for (int row = 0; row < BOARD_SIZE; row++) {
+
+            for (int col = 0; col < BOARD_SIZE; col++) {
+
+                buttons[row][col].setDisable(true);
+
+                buttons[row][col].setStyle(
+                        "-fx-font-size: 32px;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-background-color: #d3d3d3;" +
+                                "-fx-border-color: #b0b0b0;" +
+                                "-fx-background-radius: 15px;" +
+                                "-fx-border-radius: 15px;"
+                );
+            }
+        }
     }
 
     /**
