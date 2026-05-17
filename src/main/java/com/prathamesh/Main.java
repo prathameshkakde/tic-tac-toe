@@ -71,15 +71,7 @@ public class Main extends Application {
                 button.setPrefSize(100, 100);
 
                 // Style game buttons
-                button.setStyle(
-                        "-fx-font-size: 32px;" +
-                                "-fx-font-weight: bold;" +
-                                "-fx-background-color: #f5f5f5;" +
-                                "-fx-border-color: #dcdcdc;" +
-                                "-fx-border-width: 2px;" +
-                                "-fx-background-radius: 15px;" +
-                                "-fx-border-radius: 15px;"
-                );
+                applyNormalButtonStyle(button);
 
                 // Button click event
                 button.setOnAction(event -> {
@@ -268,15 +260,7 @@ public class Main extends Application {
                 buttons[row][col].setDisable(false);
 
                 // Restore button style
-                buttons[row][col].setStyle(
-                        "-fx-font-size: 32px;" +
-                                "-fx-font-weight: bold;" +
-                                "-fx-background-color: #f5f5f5;" +
-                                "-fx-border-color: #dcdcdc;" +
-                                "-fx-border-width: 2px;" +
-                                "-fx-background-radius: 15px;" +
-                                "-fx-border-radius: 15px;"
-                );
+                applyDisabledButtonStyle(buttons[row][col]);
             }
         }
 
@@ -313,6 +297,37 @@ public class Main extends Application {
                 );
             }
         }
+    }
+
+    /**
+     * Applies the normal button style.
+     */
+    private void applyNormalButtonStyle(Button button) {
+
+        button.setStyle(
+                "-fx-font-size: 32px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-color: #f5f5f5;" +
+                        "-fx-border-color: #dcdcdc;" +
+                        "-fx-border-width: 2px;" +
+                        "-fx-background-radius: 15px;" +
+                        "-fx-border-radius: 15px;"
+        );
+    }
+
+    /**
+     * Applies the disabled button style.
+     */
+    private void applyDisabledButtonStyle(Button button) {
+
+        button.setStyle(
+                "-fx-font-size: 32px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-color: #d3d3d3;" +
+                        "-fx-border-color: #b0b0b0;" +
+                        "-fx-background-radius: 15px;" +
+                        "-fx-border-radius: 15px;"
+        );
     }
 
     /**
