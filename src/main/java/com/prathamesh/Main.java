@@ -4,9 +4,9 @@ import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 /**
@@ -14,17 +14,11 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-    // size of the Tic-Tac-Toe board
+    // Board size constant
     private static final int BOARD_SIZE = 3;
 
-    // Track current player
-    private String currentPlayer = "X";
-
-    // 2D array to store board state
-    private String[][] board = new String[BOARD_SIZE][BOARD_SIZE];
-
-    // Track whether game has ended
-    private boolean gameOver = false;
+    // Game logic object
+    private GameLogic gameLogic = new GameLogic();
 
     // Store button references
     private Button[][] buttons = new Button[BOARD_SIZE][BOARD_SIZE];
@@ -35,10 +29,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        // Create a GidePane layout
+        // Create GridPane layout
         GridPane gridPane = new GridPane();
 
-        // Center the grid on screen
+        // Center the grid
         gridPane.setAlignment(Pos.CENTER);
 
         // Add spacing between buttons
@@ -52,16 +46,16 @@ public class Main extends Application {
                         "-fx-text-fill: #333333;"
         );
 
-        // Create 3 by 3 buttons using nested loops
+        // Create board buttons
         for (int row = 0; row < BOARD_SIZE; row++) {
 
             for (int col = 0; col < BOARD_SIZE; col++) {
 
-                // Store current row and column for event handling
+                // Store row and column
                 final int currentRow = row;
                 final int currentCol = col;
 
-                // Create a button
+                // Create button
                 Button button = new Button();
 
                 // Store button reference
@@ -70,62 +64,87 @@ public class Main extends Application {
                 // Set button size
                 button.setPrefSize(100, 100);
 
-                // Style game buttons
+                // Apply style
                 applyNormalButtonStyle(button);
 
                 // Button click event
                 button.setOnAction(event -> {
 
-                    // Only allow click if button is empty
-                    if (button.getText().isEmpty() && !gameOver){
+                    // Only allow move if button empty and game active
+                    if (button.getText().isEmpty()
+                            && !gameLogic.isGameOver()) {
 
-                        // set current player's symbol
-                        button.setText(currentPlayer);
+                        // Place symbol visually
+                        button.setText(gameLogic.getCurrentPlayer());
 
-                        // Store move in board array
-                        board[currentRow][currentCol] = currentPlayer;
+                        // Store move internally
+                        gameLogic.makeMove(
+                                currentRow,
+                                currentCol,
+                                gameLogic.getCurrentPlayer()
+                        );
 
-                        // Check if current player has won
+                        // Check winner
                         if (checkWinner()) {
 
-                            System.out.println("Player " + currentPlayer + " Wins!!");
-                            statusLabel.setText("Player " + currentPlayer + " Wins!");
+                            System.out.println(
+                                    "Player "
+                                            + gameLogic.getCurrentPlayer()
+                                            + " Wins!"
+                            );
+
+                            statusLabel.setText(
+                                    "Player "
+                                            + gameLogic.getCurrentPlayer()
+                                            + " Wins!"
+                            );
+
                             statusLabel.setStyle(
                                     "-fx-font-size: 20px;" +
                                             "-fx-font-weight: bold;" +
                                             "-fx-text-fill: #2E8B57;"
                             );
-                            gameOver = true;
-                            // Disable all buttons visually
+
+                            gameLogic.setGameOver(true);
+
                             disableBoard();
                         }
-                        // Check for draw
+
+                        // Check draw
                         else if (checkDraw()) {
 
                             System.out.println("The game is a draw!");
+
                             statusLabel.setText("It's a Draw!");
+
                             statusLabel.setStyle(
                                     "-fx-font-size: 20px;" +
                                             "-fx-font-weight: bold;" +
                                             "-fx-text-fill: #FF8C00;"
                             );
 
-                            gameOver = true;
+                            gameLogic.setGameOver(true);
+
                             disableBoard();
                         }
 
-                        // Switch player only if game is still running
-                        if (!gameOver) {
+                        // Continue game if not over
+                        if (!gameLogic.isGameOver()) {
 
-                            // Switch players turn
-                            if (currentPlayer.equals("X")) {
-                                currentPlayer = "O";
+                            // Switch player
+                            if (gameLogic.getCurrentPlayer().equals("X")) {
+                                gameLogic.setCurrentPlayer("O");
                             } else {
-                                currentPlayer = "X";
+                                gameLogic.setCurrentPlayer("X");
                             }
 
-                            // Update turn message
-                            statusLabel.setText("Player " + currentPlayer + "'s Turn");
+                            // Update status label
+                            statusLabel.setText(
+                                    "Player "
+                                            + gameLogic.getCurrentPlayer()
+                                            + "'s Turn"
+                            );
+
                             statusLabel.setStyle(
                                     "-fx-font-size: 20px;" +
                                             "-fx-font-weight: bold;" +
@@ -135,7 +154,7 @@ public class Main extends Application {
                     }
                 });
 
-                // Add button to GridPane
+                // Add button to grid
                 gridPane.add(button, col, row);
             }
         }
@@ -153,7 +172,7 @@ public class Main extends Application {
                         "-fx-padding: 10px 20px;"
         );
 
-        // Restart button click event
+        // Restart button action
         restartButton.setOnAction(event -> resetGame());
 
         // Create vertical layout
@@ -162,8 +181,12 @@ public class Main extends Application {
         // Center layout
         root.setAlignment(Pos.CENTER);
 
-        // Add game board and restart button
-        root.getChildren().addAll(statusLabel, gridPane, restartButton);
+        // Add UI components
+        root.getChildren().addAll(
+                statusLabel,
+                gridPane,
+                restartButton
+        );
 
         // Create scene
         Scene scene = new Scene(root, 450, 550);
@@ -172,14 +195,16 @@ public class Main extends Application {
         primaryStage.setTitle("Tic-Tac-Toe Game");
         primaryStage.setScene(scene);
 
-        // Show application window
+        // Show application
         primaryStage.show();
     }
 
     /**
-     *  Checks if the current player has won
+     * Checks if current player has won.
      */
     private boolean checkWinner() {
+
+        String[][] board = gameLogic.getBoard();
 
         // Check rows
         for (int row = 0; row < BOARD_SIZE; row++) {
@@ -187,6 +212,7 @@ public class Main extends Application {
             if (board[row][0] != null &&
                     board[row][0].equals(board[row][1]) &&
                     board[row][1].equals(board[row][2])) {
+
                 return true;
             }
         }
@@ -197,6 +223,7 @@ public class Main extends Application {
             if (board[0][col] != null &&
                     board[0][col].equals(board[1][col]) &&
                     board[1][col].equals(board[2][col])) {
+
                 return true;
             }
         }
@@ -205,6 +232,7 @@ public class Main extends Application {
         if (board[0][0] != null &&
                 board[0][0].equals(board[1][1]) &&
                 board[1][1].equals(board[2][2])) {
+
             return true;
         }
 
@@ -212,75 +240,75 @@ public class Main extends Application {
         if (board[0][2] != null &&
                 board[0][2].equals(board[1][1]) &&
                 board[1][1].equals(board[2][0])) {
+
             return true;
         }
 
-        // No winner found
         return false;
     }
 
     /**
-     * Checks if the game is a draw.
+     * Checks if game is draw.
      */
     private boolean checkDraw() {
 
-        // Check every cell in the board
+        String[][] board = gameLogic.getBoard();
+
+        // Check every cell
         for (int row = 0; row < BOARD_SIZE; row++) {
 
             for (int col = 0; col < BOARD_SIZE; col++) {
 
-                // If any cell is empty, game is not draw
                 if (board[row][col] == null) {
                     return false;
                 }
             }
         }
 
-        // No empty cells found
         return true;
     }
 
     /**
-     * Reset the game board
+     * Resets the game.
      */
     private void resetGame() {
 
-        // Reset board array and buttons
-        for  (int row = 0; row < BOARD_SIZE; row++) {
+        // Reset game logic
+        gameLogic.resetBoard();
+
+        // Reset buttons
+        for (int row = 0; row < BOARD_SIZE; row++) {
 
             for (int col = 0; col < BOARD_SIZE; col++) {
-
-                // Clear board data
-                board[row][col] = null;
 
                 // Clear button text
                 buttons[row][col].setText("");
 
-                // Re-enable button first
+                // Enable button
                 buttons[row][col].setDisable(false);
 
-                // Clear any disabled styling
+                // Clear old style
                 buttons[row][col].setStyle("");
 
-                // Apply normal style again
+                // Restore style
                 applyNormalButtonStyle(buttons[row][col]);
             }
         }
 
-        // Reset current player
-        currentPlayer = "X";
-
         // Reset status label
         statusLabel.setText("Player X's Turn");
 
-        // Allow game again
-        gameOver = false;
+        statusLabel.setStyle(
+                "-fx-font-size: 20px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-text-fill: #333333;"
+        );
 
         System.out.println("Game restarted!");
     }
 
     /**
-     * Disables the board visually after game ends.
+     * Disables board visually.
      */
     private void disableBoard() {
 
@@ -290,20 +318,13 @@ public class Main extends Application {
 
                 buttons[row][col].setDisable(true);
 
-                buttons[row][col].setStyle(
-                        "-fx-font-size: 32px;" +
-                                "-fx-font-weight: bold;" +
-                                "-fx-background-color: #d3d3d3;" +
-                                "-fx-border-color: #b0b0b0;" +
-                                "-fx-background-radius: 15px;" +
-                                "-fx-border-radius: 15px;"
-                );
+                applyDisabledButtonStyle(buttons[row][col]);
             }
         }
     }
 
     /**
-     * Applies the normal button style.
+     * Applies normal button style.
      */
     private void applyNormalButtonStyle(Button button) {
 
@@ -319,7 +340,7 @@ public class Main extends Application {
     }
 
     /**
-     * Applies the disabled button style.
+     * Applies disabled button style.
      */
     private void applyDisabledButtonStyle(Button button) {
 
@@ -334,8 +355,7 @@ public class Main extends Application {
     }
 
     /**
-     * Main method.
-     * Launches the JavaFX application.
+     * Launches JavaFX application.
      */
     public static void main(String[] args) {
         launch(args);
