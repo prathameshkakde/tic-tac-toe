@@ -85,7 +85,7 @@ public class Main extends Application {
                         );
 
                         // Check winner
-                        if (checkWinner()) {
+                        if (gameLogic.checkWinner()) {
 
                             System.out.println(
                                     "Player "
@@ -111,7 +111,7 @@ public class Main extends Application {
                         }
 
                         // Check draw
-                        else if (checkDraw()) {
+                        else if (gameLogic.checkDraw()) {
 
                             System.out.println("The game is a draw!");
 
@@ -197,75 +197,6 @@ public class Main extends Application {
 
         // Show application
         primaryStage.show();
-    }
-
-    /**
-     * Checks if current player has won.
-     */
-    private boolean checkWinner() {
-
-        String[][] board = gameLogic.getBoard();
-
-        // Check rows
-        for (int row = 0; row < BOARD_SIZE; row++) {
-
-            if (board[row][0] != null &&
-                    board[row][0].equals(board[row][1]) &&
-                    board[row][1].equals(board[row][2])) {
-
-                return true;
-            }
-        }
-
-        // Check columns
-        for (int col = 0; col < BOARD_SIZE; col++) {
-
-            if (board[0][col] != null &&
-                    board[0][col].equals(board[1][col]) &&
-                    board[1][col].equals(board[2][col])) {
-
-                return true;
-            }
-        }
-
-        // Check main diagonal
-        if (board[0][0] != null &&
-                board[0][0].equals(board[1][1]) &&
-                board[1][1].equals(board[2][2])) {
-
-            return true;
-        }
-
-        // Check opposite diagonal
-        if (board[0][2] != null &&
-                board[0][2].equals(board[1][1]) &&
-                board[1][1].equals(board[2][0])) {
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks if game is draw.
-     */
-    private boolean checkDraw() {
-
-        String[][] board = gameLogic.getBoard();
-
-        // Check every cell
-        for (int row = 0; row < BOARD_SIZE; row++) {
-
-            for (int col = 0; col < BOARD_SIZE; col++) {
-
-                if (board[row][col] == null) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     /**

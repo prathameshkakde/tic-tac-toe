@@ -75,4 +75,70 @@ public class GameLogic {
         currentPlayer = "X";
         gameOver = false;
     }
+
+    /**
+     * Checks if current player has won.
+     */
+    public boolean checkWinner() {
+
+        // Check rows
+        for (int row = 0; row < BOARD_SIZE; row++) {
+
+            if (board[row][0] != null &&
+                    board[row][0].equals(board[row][1]) &&
+                    board[row][1].equals(board[row][2])) {
+
+                return true;
+            }
+        }
+
+        // Check columns
+        for (int col = 0; col < BOARD_SIZE; col++) {
+
+            if (board[0][col] != null &&
+                    board[0][col].equals(board[1][col]) &&
+                    board[1][col].equals(board[2][col])) {
+
+                return true;
+            }
+        }
+
+        // Check main diagonal
+        if (board[0][0] != null &&
+                board[0][0].equals(board[1][1]) &&
+                board[1][1].equals(board[2][2])) {
+
+            return true;
+        }
+
+        // Check opposite diagonal
+        if (board[0][2] != null &&
+                board[0][2].equals(board[1][1]) &&
+                board[1][1].equals(board[2][0])) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the game is a draw.
+     */
+    public boolean checkDraw() {
+
+        // Check every cell
+        for (int row = 0; row < BOARD_SIZE; row++) {
+
+            for (int col = 0; col < BOARD_SIZE; col++) {
+
+                // Empty cell means game continues
+                if (board[row][col] == null) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 }
